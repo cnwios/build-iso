@@ -1,13 +1,13 @@
-VyOS ISO Build Procedures
+WiOS ISO Build Procedures
 
-    This document describes how to build a VyOS ISO image. The most
+    This document describes how to build a WiOS ISO image. The most
     recent version of this document is the top-level README file from 
     the default branch of the "build-iso" git source repository.
 
 
 Build Host Setup
 
-    The current VyOS ISO build requires a Debian "squeeze"-based system.
+    The current WiOS ISO build requires a Debian "squeeze"-based system.
     As of now, "squeeze" is the Debian "stable" release. Therefore, to
     install a minimal squeeze system, download a squeeze installer "netinst"
     or "businesscard" ISO image from the following Debian page:
@@ -21,7 +21,7 @@ Build Host Setup
 
     After the installation and reboot, your "apt" sources.list file should
     be configured to use the Debian mirror that you selected during the
-    installation. In order to build the VyOS packages and the ISO,
+    installation. In order to build the WiOS packages and the ISO,
     install the following packages using "apt-get" or "aptitude".
 
       git                      # Required, for cloning the source
@@ -54,13 +54,13 @@ Build Host Setup
     follow the procedures from the Build Host Setup for Building Submodules
     section.
 
-    Now install the VyOS package repository GPG key.
+    Now install the WiOS package repository GPG key.
 
       wget -O - http://packages.vyos.net/vyos-pubkey.gpg  | sudo apt-key add -
 
 Tools update:
     You will also need to download and install a newer "squashfs-tools"
-    package from the squeeze-backports repository. VyOS uses extended
+    package from the squeeze-backports repository. WiOS uses extended
     file attributes, and older (pre 4.2) versions do not handle attributes.
 
     Debian instructions on how to setup squeeze-backports.
@@ -75,11 +75,11 @@ Tools update:
 
 Getting "build-iso" Source
 
-    The VyOS ISO builder consists of scripts and config files
+    The WiOS ISO builder consists of scripts and config files
     maintained as a git repository named "build-iso". First, clone
     the build-iso git repository.
 
-	git clone https://github.com/vyos/build-iso.git
+	git clone https://github.com/cnwios/build-iso.git
 
     This will create the source tree in the directory "build-iso".
     (At this point, you might want to switch to reading
@@ -96,18 +96,18 @@ Getting "build-iso" Source
 
 Build ISO
 
-    To build a VyOS ISO, do the following in the "build-iso" directory
+    To build a WiOS ISO, do the following in the "build-iso" directory
     (which has been set up as described in the previous section).
 
     Select the kernel type to include in the finished iso image by
     setting flavor to one of the available types (this also applies if
     you are building your own kernel package as well):
 
-    586-vyos (defaults to this if not set)
-    586-vyos-virt
-    amd64-vyos 
+    586-wios (defaults to this if not set)
+    586-wios-virt
+    amd64-wios 
 
-        flavor=586-vyos
+        flavor=586-wios
         export PATH=/sbin:/usr/sbin:$PATH
         autoreconf -i
         ./configure --with-kernel-flavor=$flavor
@@ -121,7 +121,7 @@ Build ISO
         livecd/binary.iso
 
     Note that the above build process uses the pre-built binary packages
-    from the VyOS package repository, which contains the
+    from the WiOS package repository, which contains the
     latest development packages built by the maintainers.
 
     If you want to make modifications to one or more packages, you will
@@ -133,22 +133,22 @@ Build ISO
 Build Xen Image (pygrub / pv-grub)
 
     In the same manner as the above process on building an ISO, to build
-    a VyOS Xen image, do the following in the "build-iso" directory 
+    a WiOS Xen image, do the following in the "build-iso" directory 
     (which has been set up as described in the previous section).
 
     Select the kernel type to include in the finished Xen image by
     setting flavor to one of the available types (this also applies if
     you are building your own kernel package as well):
 
-    586-vyos-virt
-    amd64-vyos 
+    586-wios-virt
+    amd64-wios 
 
-        flavor=amd64-vyos
+        flavor=amd64-wios
         export PATH=/sbin:/usr/sbin:$PATH
         autoreconf -i
         ./configure --with-kernel-flavor=$flavor --with-xen-pv-image
         
-    The VyOS Xen image defaults to using /dev/xvda for it's boot device
+    The WiOS Xen image defaults to using /dev/xvda for it's boot device
     and an image size of 4GB.  If your Xen setup requires a different
     boot device or image size, then you can set it with the following
     addtional configuation options:
@@ -162,11 +162,11 @@ Build Xen Image (pygrub / pv-grub)
 
     The end result is the following Xen image.
     
-        livecd/VyOS-xen-pv-image-$BUILDID-$arch.img.gz
+        livecd/WiOS-xen-pv-image-$BUILDID-$arch.img.gz
         
         for example
         
-        livecd/VyOS-xen-pv-1507122026-74cc365-amd64.img.gz
+        livecd/WiOS-xen-pv-1507122026-74cc365-amd64.img.gz
         
     The image produced by the build process is currently set to 4GB in
     size, so will fit into a 4096MB disk image, but the final image is 
@@ -193,17 +193,17 @@ Build Xen Image (pygrub / pv-grub)
     following command.  WARNING, this overwrites EVERYTHING on the 
     destination disk.
     
-    dd if=livecd/VyOS-xen-pv-1507122026-74cc365-amd64.img.gz | \
+    dd if=livecd/WiOS-xen-pv-1507122026-74cc365-amd64.img.gz | \
       ssh username@remotevpshost "gzip -d | dd of=/dev/xvda"
 
     This copies your local compressed image to the remote host via dd, 
     uncompresses it, and then uses dd to copy the image to the destination
     disk.
     
-    4) Reboot your system into VyOS.
+    4) Reboot your system into WiOS.
     
     Note that the above build process uses the pre-built binary packages
-    from the VyOS package repository, which contains the latest 
+    from the WiOS package repository, which contains the latest 
     development packages built by the maintainers.
 
     If you want to make modifications to one or more packages, you will
@@ -214,7 +214,7 @@ Build Xen Image (pygrub / pv-grub)
 
 Build Host Setup for Building Submodules
 
-    VyOS code is organized in multiple submodules instead of a huge
+    WiOS code is organized in multiple submodules instead of a huge
     single repo. For more information about submodules see
     http://git-scm.com/book/en/Git-Tools-Submodules
 
@@ -235,7 +235,7 @@ Build Host Setup for Building Submodules
 
     At this moment, the current development branch is "lithium" and the
     stable branch is "helium".
-    You can lookup release to branch mapping at http://vyos.net
+    You can lookup release to branch mapping at http://wios.591wifi.com
 
     Submodules may have build dependencies not present in the system by default.
     You can install build dependencies by running the following
@@ -261,7 +261,7 @@ Build Host Setup for Building Submodules
         libnetfilter-queue. Build and install these first.
 
     The alternative to building those dependencies from source is to install them from
-    the VyOS repository, http://packages.vyos.net/vyos/ (set distribution to the current
+    the WiOS repository, http://packages.wios.net/wios/ (set distribution to the current
     development branch).
     
     Some submodules make use of udebs during their build process, however due to a
@@ -345,8 +345,8 @@ Changes
     1. Email patches
         Use "git format-patch -${number of commits}" command. It will produce
         one or more patch files in your repo directory. Email these patches to
-        maintainers@vyos.net or (better) add them to the corresponding bug on
-        http://bugzilla.vyos.net as attachments.
+        wios@591wifi.com or (better) add them to the corresponding bug on
+        http://bugzilla.591wifi.com as attachments.
 
     2. Fork the submodule on github and make pull request.
 
