@@ -1,8 +1,8 @@
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
 
-AC_INIT([vyos], [0.1.0], [maintainers@vyos.net], [vyos], [http://vyos.net])
-AC_COPYRIGHT([Copyright (c) 2013 VyOS maintainers and contributors])
+AC_INIT([wios], [1.0.0], [wios@591wifi.com], [wios], [http://wios.591wifi.com])
+AC_COPYRIGHT([Copyright (c) 2017 591wifi.com])
 
 # Checks for programs.
 AC_PROG_LN_S
@@ -38,20 +38,20 @@ AC_ARG_VAR(LB_BOOTSTRAP_FLAVOUR, [default: minimal])
 test "X$LB_CHROOT_FILESYSTEM" = "X" && LB_CHROOT_FILESYSTEM=squashfs
 AC_ARG_VAR(LB_CHROOT_FILESYSTEM, [default: squashfs])
 
-test "X$LB_HOSTNAME" = "X" && LB_HOSTNAME=vyos
-AC_ARG_VAR(LB_HOSTNAME, [default: vyos])
+test "X$LB_HOSTNAME" = "X" && LB_HOSTNAME=wios
+AC_ARG_VAR(LB_HOSTNAME, [default: wios])
 
 test "X$LB_INITRAMFS" = "X" && LB_INITRAMFS=live-initramfs
 AC_ARG_VAR(LB_INITRAMFS, [default: live-initramfs])
 
-test "X$LB_ISO_APPLICATION" = "X" && LB_ISO_APPLICATION="VyOS"
-AC_ARG_VAR(LB_ISO_APPLICATION, [default: VyOS])
+test "X$LB_ISO_APPLICATION" = "X" && LB_ISO_APPLICATION="WiOS"
+AC_ARG_VAR(LB_ISO_APPLICATION, [default: WiOS])
 
-test "X$LB_ISO_PUBLISHER" = "X" && LB_ISO_PUBLISHER="VyOS; http://vyos.net/;"
-AC_ARG_VAR(LB_ISO_PUBLISHER, [default: VyOS])
+test "X$LB_ISO_PUBLISHER" = "X" && LB_ISO_PUBLISHER="WiOS; http://wios.591wifi.com/;"
+AC_ARG_VAR(LB_ISO_PUBLISHER, [default: WiOS])
 
-test "X$LB_ISO_VOLUME" = "X" && LB_ISO_VOLUME='VyOS '
-AC_ARG_VAR(LB_ISO_VOLUME, [default: VyOS])
+test "X$LB_ISO_VOLUME" = "X" && LB_ISO_VOLUME='WiOS '
+AC_ARG_VAR(LB_ISO_VOLUME, [default: WiOS])
 
 test "X$LB_LANGUANGE" = "X" && LB_LANGUAGE=en
 AC_ARG_VAR(LB_LANGUAGE, [default: en])
@@ -91,12 +91,12 @@ AC_ARG_WITH(devbuild,
 	[with_devbuild=yes])
 
 if test "X$with_devbuild" = Xyes ; then
-  VYOS_DEV_BUILD=true
+  WIOS_DEV_BUILD=true
 
   # For the case previous build was a release build
   rm -f livecd/version
 else
-  VYOS_DEV_BUILD=false
+  WIOS_DEV_BUILD=false
 fi
 
 AC_ARG_WITH(release-build,
@@ -105,21 +105,21 @@ AC_ARG_WITH(release-build,
 	[with_community_build=yes],
 	[])
 if test "X$with_community_build" = Xyes ; then
-  VYOS_RELEASE_BUILD=true
-  VYOS_DEV_BUILD=false
+  WIOS_RELEASE_BUILD=true
+  WIOS_DEV_BUILD=false
 else
-  VYOS_RELEASE_BUILD=false
+  WIOS_RELEASE_BUILD=false
 fi
 
-if eval "$VYOS_DEV_BUILD"; then
-  touch pkgs/.VYOS_DEV_BUILD
+if eval "$WIOS_DEV_BUILD"; then
+  touch pkgs/.WIOS_DEV_BUILD
 else
-  rm -f pkgs/.VYOS_DEV_BUILD
+  rm -f pkgs/.WIOS_DEV_BUILD
 fi
 
 AC_ARG_WITH(build-by,
   [AS_HELP_STRING([--with-build-by=<builder id>],
-    [Specify builder id, normally your email (e.g. maintainers@vyos.net)])],
+    [Specify builder id, normally your email (e.g. wios@591wifi.com])],
   [], [])
 
 if test X$with_build_by != X ; then
@@ -132,11 +132,11 @@ fi
 BARCH=$(dpkg-architecture -qDEB_BUILD_ARCH)
 
 # default flavor for i386 and amd64
-LB_LINUX_FLAVOURS="586-vyos"
-VIRT_FLAVOUR="586-vyos-virt"
+LB_LINUX_FLAVOURS="586-wios"
+VIRT_FLAVOUR="586-wios-virt"
 if test X$BARCH = Xamd64; then
-  LB_LINUX_FLAVOURS="amd64-vyos"
-  VIRT_FLAVOUR="amd64-vyos"
+  LB_LINUX_FLAVOURS="amd64-wios"
+  VIRT_FLAVOUR="amd64-wios"
 fi
 
 # user-specified flavor
@@ -178,16 +178,16 @@ else
   PV_IMAGE_SIZE="4G"
 fi
 
-# Expansion to allow definition of VYOS_BUILD_BRANCH
+# Expansion to allow definition of WIOS_BUILD_BRANCH
 # on configure invocation
-AC_ARG_WITH(vyos_build_branch,
-  [AS_HELP_STRING([--with-vyos-build-branch=<branch>],
+AC_ARG_WITH(wios_build_branch,
+  [AS_HELP_STRING([--with-wios-build-branch=<branch>],
   [Target branch (e.g., "lithium"), default to the supermodule branch])],
   [])
 
-if test "X$with_vyos_build_branch" != X ; then
-  echo BRANCH is $with_vyos_build_branch
-  VYOS_BUILD_BRANCH="$with_vyos_build_branch"
+if test "X$with_wios_build_branch" != X ; then
+  echo BRANCH is $with_wios_build_branch
+  WIOS_BUILD_BRANCH="$with_wios_build_branch"
 fi
 
 # Debian bootstrap package mirror
@@ -198,9 +198,9 @@ AC_ARG_WITH(debian_bootstrap_mirror,
 
 if test X$with_debian_bootstrap_mirror != X ; then
   echo "Using $with_debian_bootstrap_mirror as debian bootstrap mirror"
-  VYOS_DEBIAN_BOOTSTRAP_MIRROR="$with_debian_bootstrap_mirror"
+  WIOS_DEBIAN_BOOTSTRAP_MIRROR="$with_debian_bootstrap_mirror"
 else
-  VYOS_DEBIAN_BOOTSTRAP_MIRROR="http://dev.packages.vyos.net"
+  WIOS_DEBIAN_BOOTSTRAP_MIRROR="http://dev.packages.591wifi.com"
 fi
 
 # Debian package mirror
@@ -211,22 +211,22 @@ AC_ARG_WITH(debian_mirror,
 
 if test X$with_debian_mirror != X ; then
   echo "Using $with_debian_mirror as debian mirror"
-  VYOS_DEBIAN_MIRROR="$with_debian_mirror"
+  WIOS_DEBIAN_MIRROR="$with_debian_mirror"
 else
-  VYOS_DEBIAN_MIRROR="http://dev.packages.vyos.net"
+  WIOS_DEBIAN_MIRROR="http://dev.packages.591wifi.com"
 fi
 
-# VyOS package mirror
-AC_ARG_WITH(vyos_mirror,
-  [AS_HELP_STRING([--with-vyos-mirror=<URL>, relative to branch directory],
-  [VyOS package mirror URL])],
+# WIOS package mirror
+AC_ARG_WITH(wios_mirror,
+  [AS_HELP_STRING([--with-wios-mirror=<URL>, relative to branch directory],
+  [WiOS package mirror URL])],
   [])
 
-if test X$with_vyos_mirror != X ; then
-  echo "Using $with_vyos_mirror as VyOS package mirror"
-  VYOS_PACKAGE_MIRROR="$with_vyos_mirror"
+if test X$with_wios_mirror != X ; then
+  echo "Using $with_wios_mirror as WiOS package mirror"
+  WIOS_PACKAGE_MIRROR="$with_wios_mirror"
 else
-  VYOS_PACKAGE_MIRROR="http://dev.packages.vyos.net/"
+  WIOS_PACKAGE_MIRROR="http://dev.packages.591wifi.com/"
 fi
 
 BUILD_TIME=''
@@ -265,8 +265,8 @@ fi
 
 LB_LINUX_PACKAGES=none
 
-if test "X$VYOS_BUILD_BRANCH" == X; then
-  VYOS_BUILD_BRANCH=$(git branch |sed -n 's/^\* \(.*\)$/\1/p')
+if test "X$WIOS_BUILD_BRANCH" == X; then
+  WIOS_BUILD_BRANCH=$(git branch |sed -n 's/^\* \(.*\)$/\1/p')
 fi
 
 LB_SECURITY="false"
@@ -313,13 +313,13 @@ AC_SUBST(create_xen_pv_image)
 AC_SUBST(PV_BOOT_DEVICE)
 AC_SUBST(PV_IMAGE_SIZE)
 
-AC_SUBST(VYOS_DEBIAN_BOOTSTRAP_MIRROR)
-AC_SUBST(VYOS_DEBIAN_MIRROR)
-AC_SUBST(VYOS_PACKAGE_MIRROR)
+AC_SUBST(WIOS_DEBIAN_BOOTSTRAP_MIRROR)
+AC_SUBST(WIOS_DEBIAN_MIRROR)
+AC_SUBST(WIOS_PACKAGE_MIRROR)
 
-AC_SUBST(VYOS_DEV_BUILD)
-AC_SUBST(VYOS_RELEASE_BUILD)
-AC_SUBST(VYOS_BUILD_BRANCH)
+AC_SUBST(WIOS_DEV_BUILD)
+AC_SUBST(WIOS_RELEASE_BUILD)
+AC_SUBST(WIOS_BUILD_BRANCH)
 AC_SUBST(BUILD_TIME)
 
 AC_OUTPUT
