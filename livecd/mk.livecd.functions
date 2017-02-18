@@ -2,7 +2,7 @@
 #
 # Copyright 2013 Vyatta, Inc
 
-export VYOS_REQUIRED_PACKAGES="vyatta-bash, vyatta-biosdevname, vyatta-busybox, \
+export WIOS_REQUIRED_PACKAGES="vyatta-bash, vyatta-biosdevname, vyatta-busybox, \
     vyatta-cfg, vyatta-cfg-dhcp-relay, \
     vyatta-cfg-dhcp-server, vyatta-cfg-firewall, vyatta-cfg-op-pppoe, \
     vyatta-cfg-qos, vyatta-cfg-quagga, vyatta-cfg-system, vyatta-cfg-vpn, \
@@ -60,8 +60,8 @@ get_actual_version () {
     FULL_VERSION=$(get_full_version "$NUMERIC_VERSION")
 
     if [ -z "$NUMERIC_VERSION" ]; then
-      NUMERIC_VERSION=$VYOS_DEV_VERSION
-      FULL_VERSION=$VYOS_DEV_VERSION
+      NUMERIC_VERSION=$WIOS_DEV_VERSION
+      FULL_VERSION=$WIOS_DEV_VERSION
       echo "I: Build type: DEVELOPMENT, version $FULL_VERSION"
     else
       echo "I: Build type: RELEASE, version $FULL_VERSION"
@@ -123,7 +123,7 @@ EOF
         echo "Essential: no"
         echo "Section: base"
         echo "Replaces: vyatta-version, vc-version, vc2-version, devel-version, vyatta-cfg-system"
-        echo "Depends: $VYOS_REQUIRED_PACKAGES" 
+        echo "Depends: $WIOS_REQUIRED_PACKAGES" 
         echo -n Suggests: 
         <$vf/deb-versions.txt sed -e 's/ *\([^ ]*\)$/(>=\1),/' -e 's/^/ /'
         echo " nano"
@@ -302,11 +302,11 @@ create_default_grub_config ()
 
 set_up_lh_config ()
 {
-  if [ -z "$VYOS_BUILD_BRANCH" ]; then
+  if [ -z "$WIOS_BUILD_BRANCH" ]; then
     echo E: Build branch is not set
     exit 1
   fi
-  local branch=$VYOS_BUILD_BRANCH
+  local branch=$WIOS_BUILD_BRANCH
 
   # get the branch/repo related parameters if any
   if [ -f config.vyatta/vbuild.conf ]; then
@@ -314,22 +314,22 @@ set_up_lh_config ()
   fi
 
   # Remove trailing /'s from URLs
-  VYOS_DEBIAN_MIRROR=`echo $VYOS_DEBIAN_MIRROR | sed -re 's!(.*[^/])/+$!\1!'`
-  VYOS_DEBIAN_BOOTSTRAP_MIRROR=`echo $VYOS_DEBIAN_BOOTSTRAP_MIRROR | sed -re 's!(.*[^/])/+$!\1!'`
-  VYOS_PACKAGE_MIRROR=`echo $VYOS_PACKAGE_MIRROR | sed -re 's!(.*[^/])/+$!\1!'`
+  WIOS_DEBIAN_MIRROR=`echo $WIOS_DEBIAN_MIRROR | sed -re 's!(.*[^/])/+$!\1!'`
+  WIOS_DEBIAN_BOOTSTRAP_MIRROR=`echo $WIOS_DEBIAN_BOOTSTRAP_MIRROR | sed -re 's!(.*[^/])/+$!\1!'`
+  WIOS_PACKAGE_MIRROR=`echo $WIOS_PACKAGE_MIRROR | sed -re 's!(.*[^/])/+$!\1!'`
 
   # set up the debian repo
-  LB_MIRROR_BINARY=$VYOS_DEBIAN_MIRROR/debian/$branch
-  LB_MIRROR_BOOTSTRAP=$VYOS_DEBIAN_BOOTSTRAP_MIRROR/debian/$branch
+  LB_MIRROR_BINARY=$WIOS_DEBIAN_MIRROR/debian/$branch
+  LB_MIRROR_BOOTSTRAP=$WIOS_DEBIAN_BOOTSTRAP_MIRROR/debian/$branch
 
   echo "I: Using Debian mirror $LB_MIRROR_BINARY"
   echo "I: Using Debian bootstrap mirror $LB_MIRROR_BOOTSTRAP"
 
   export LB_MIRROR_BINARY LB_MIRROR_BOOTSTRAP
 
-  local dev_repo_root=$VYOS_PACKAGE_MIRROR/vyos
+  local dev_repo_root=$WIOS_PACKAGE_MIRROR/vyos
   local repo_dir=unstable
-  if ! eval "$VYOS_DEV_BUILD"; then
+  if ! eval "$WIOS_DEV_BUILD"; then
     # not dev build => use testing.
     #repo_dir=testing
     repo_dir=unstable
@@ -353,7 +353,7 @@ set_up_lh_config ()
       echo "deb $dev_repo_root $branch main" > vyatta.chroot
     fi
     ## switch between development or release keys depending on build type
-    if eval "$VYOS_DEV_BUILD"; then
+    if eval "$WIOS_DEV_BUILD"; then
       cp development.vyatta.chroot.gpg vyatta.chroot.gpg
     else
       cp release.vyatta.chroot.gpg vyatta.chroot.gpg
@@ -369,7 +369,7 @@ set_up_lh_config ()
 
     # set up apt preferences
     cd ../chroot_apt
-    for val in "$VYOS_BUILD_BRANCH" "$VBUILD_BASE_BRANCH" \
+    for val in "$WIOS_BUILD_BRANCH" "$VBUILD_BASE_BRANCH" \
                   "${VBUILD_EXTRA_PKGS[@]}"; do
       if [ -z "$val" ]; then
         continue
@@ -377,7 +377,7 @@ set_up_lh_config ()
       local label=EXTRA
       local prio=999
       local pkg='*'
-      if [ "$val" == "$VYOS_BUILD_BRANCH" ]; then
+      if [ "$val" == "$WIOS_BUILD_BRANCH" ]; then
         # "this" branch
         label=OVERLAY
         prio=1000
