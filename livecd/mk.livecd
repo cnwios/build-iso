@@ -24,13 +24,13 @@ echo I: configuring build
 set_up_lh_config
 
 # set up version template
-if eval "$VYOS_RELEASE_BUILD"; then
+if eval "$WIOS_RELEASE_BUILD"; then
   # community build
   cp -f templates/version .
 fi
 
 # set up dev build version string
-export VYOS_DEV_VERSION=$(get_dev_version)
+export WIOS_DEV_VERSION=$(get_dev_version)
 
 # copy the locally-built packages for installation
 # (but only those on one of the lists)
